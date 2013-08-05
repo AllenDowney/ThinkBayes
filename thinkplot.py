@@ -1,1 +1,1 @@
-../thinkplot.py
+myplot.py
