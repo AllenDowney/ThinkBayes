@@ -13,7 +13,7 @@ import numpy as np
 # customize some matplotlib attributes
 #matplotlib.rc('figure', figsize=(4, 3))
 
-matplotlib.rc('font', size=14.0)
+#matplotlib.rc('font', size=14.0)
 #matplotlib.rc('axes', labelsize=22.0, titlesize=22.0)
 #matplotlib.rc('legend', fontsize=20.0)
 
@@ -87,13 +87,28 @@ class Brewer(object):
         return cls.color_iter
 
 
-def PrePlot(num=None):
+def PrePlot(num=None, rows=1, cols=1):
     """Takes hints about what's coming.
 
     num: number of lines that will be plotted
     """
-    Brewer.InitializeIter(num)
+    if num:
+        Brewer.InitializeIter(num)
+
+    # TODO: get sharey and sharex working.  probably means switching
+    # to subplots instead of subplot.
+    # also, get rid of the gray background.
+
+    if rows > 1 or cols > 1:
+        pyplot.subplots(rows, cols, sharey=True)
+        global SUBPLOT_ROWS, SUBPLOT_COLS
+        SUBPLOT_ROWS = rows
+        SUBPLOT_COLS = cols
     
+
+def SubPlot(plot_number):
+    pyplot.subplot(SUBPLOT_ROWS, SUBPLOT_COLS, plot_number)
+
 
 class InfiniteList(list):
     """A list that returns the same value for all indices."""
@@ -353,6 +368,32 @@ def Contour(obj, pcolor=False, contour=True, imshow=False, **options):
         pyplot.imshow(Z, extent=extent, **options)
         
 
+def Pcolor(xs, ys, zs, pcolor=True, contour=False, **options):
+    """Makes a pseudocolor plot.
+    
+    xs:
+    ys:
+    zs:
+    pcolor: boolean, whether to make a pseudocolor plot
+    contour: boolean, whether to make a contour plot
+    options: keyword args passed to pyplot.pcolor and/or pyplot.contour
+    """
+    Underride(options, linewidth=3, cmap=matplotlib.cm.Blues)
+
+    X, Y = np.meshgrid(xs, ys)
+    Z = zs
+
+    x_formatter = matplotlib.ticker.ScalarFormatter(useOffset=False)
+    axes = pyplot.gca()
+    axes.xaxis.set_major_formatter(x_formatter)
+
+    if pcolor:
+        pyplot.pcolormesh(X, Y, Z, **options)
+
+    if contour:
+        cs = pyplot.contour(X, Y, Z, **options)
+        pyplot.clabel(cs, inline=1, fontsize=10)
+        
 
 def Config(**options):
     """Configures the plot.
@@ -374,13 +415,13 @@ def Config(**options):
         pyplot.xscale(options['xscale'])
 
     if 'xticks' in options:
-        pyplot.xticks(*options['xticks'])
+        pyplot.xticks(options['xticks'])
 
     if 'yscale' in options:
         pyplot.yscale(options['yscale'])
 
     if 'yticks' in options:
-        pyplot.yticks(*options['yticks'])
+        pyplot.yticks(options['yticks'])
 
     if 'axis' in options:
         pyplot.axis(options['axis'])
@@ -434,6 +475,27 @@ def SaveFormat(root, fmt='eps'):
     filename = '%s.%s' % (root, fmt)
     print 'Writing', filename
     pyplot.savefig(filename, format=fmt, dpi=300)
+
+
+# provide aliases for calling functons with lower-case names
+preplot = PrePlot
+subplot = SubPlot
+clf = Clf
+figure = Figure
+plot = Plot
+scatter = Scatter
+pmf = Pmf
+pmfs = Pmfs
+hist = Hist
+hists = Hists
+diff = Diff
+cdf = Cdf
+cdfs = Cdfs
+contour = Contour
+pcolor = Pcolor
+config = Config
+show = Show
+save = Save
 
 
 def main():

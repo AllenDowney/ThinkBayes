@@ -14,7 +14,7 @@ import math
 import random
 import sys
 
-FORMATS = ['pdf', 'eps', 'png']
+FORMATS = ['pdf', 'eps', 'png', 'jpg']
 
 """
 Notation guide:
