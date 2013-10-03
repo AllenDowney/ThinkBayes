@@ -28,7 +28,7 @@ import random
 
 import scipy.stats
 from scipy.special import erf, erfinv
-
+from networkx import DiGraph
 
 def Odds(p):
     """Computes odds for a given probability.
@@ -64,7 +64,7 @@ def Probability2(yes, no):
     """Computes the probability corresponding to given odds.
 
     Example: yes=2, no=1 means 2:1 odds in favor, or 2/3 probability.
-    
+
     yes, no: int or float odds in favor
     """
     return float(yes) / (yes + no)
@@ -206,7 +206,7 @@ class _DictWrapper(object):
 
     def Log(self, m=None):
         """Log transforms the probabilities.
-        
+
         Removes values with probability 0.
 
         Normalizes so that the largest logprob is 0.
@@ -359,7 +359,7 @@ class Hist(_DictWrapper):
 
 class Pmf(_DictWrapper):
     """Represents a probability mass function.
-    
+
     Values can be any hashable type; probabilities are floating-point.
     Pmfs are not necessarily normalized.
     """
@@ -893,7 +893,7 @@ class Cdf(object):
 
     def Sample(self, n):
         """Generates a random sample from this distribution.
-        
+
         Args:
             n: int length of the sample
         """
@@ -1134,6 +1134,17 @@ class Suite(Pmf):
         data: some representation of the data
         """
         raise UnimplementedMethodException()
+    """
+    computes the Likelihood ratio of two hypotheses, given some data:
+    If Log==True, it calculates the log of the Likelihood Ratio, which is the default.
+    """
+    def LikelihoodRatio(self, data, hyp1, hyp2, Log=True):
+        like1 = self.Likelihood(data, hyp1)
+        like2 = self.Likelihood(data, hyp2)
+        if not Log:
+            return float(like1)/like2
+        else:
+            return math.log(float(like1)/like2)
 
     def Print(self):
         """Prints the hypotheses and their probabilities."""
@@ -1410,7 +1421,7 @@ def EvalGaussianPdf(x, mu, sigma):
     x: value
     mu: mean
     sigma: standard deviation
-    
+
     returns: float probability density
     """
     return scipy.stats.norm.pdf(x, mu, sigma)
@@ -1418,7 +1429,7 @@ def EvalGaussianPdf(x, mu, sigma):
 
 def MakeGaussianPmf(mu, sigma, num_sigmas, n=201):
     """Makes a PMF discrete approx to a Gaussian distribution.
-    
+
     mu: float mean
     sigma: float standard deviation
     num_sigmas: how many sigmas to extend in each direction
@@ -1443,7 +1454,7 @@ def EvalBinomialPmf(k, n, p):
     Returns the probabily of k successes in n trials with probability p.
     """
     return scipy.stats.binom.pmf(k, n, p)
-    
+
 
 def EvalPoissonPmf(k, lam):
     """Computes the Poisson PMF.
@@ -1511,13 +1522,13 @@ def MakeExponentialPmf(lam, high, n=200):
 
 def StandardGaussianCdf(x, root2=math.sqrt(2)):
     """Evaluates the CDF of the standard Gaussian distribution.
-    
+
     See http://en.wikipedia.org/wiki/Normal_distribution
     #Cumulative_distribution_function
 
     Args:
         x: float
-                
+
     Returns:
         float
     """
@@ -1526,14 +1537,14 @@ def StandardGaussianCdf(x, root2=math.sqrt(2)):
 
 def GaussianCdf(x, mu=0, sigma=1):
     """Evaluates the CDF of the gaussian distribution.
-    
+
     Args:
         x: float
 
         mu: mean parameter
-        
+
         sigma: standard deviation parameter
-                
+
     Returns:
         float
     """
@@ -1543,15 +1554,15 @@ def GaussianCdf(x, mu=0, sigma=1):
 def GaussianCdfInverse(p, mu=0, sigma=1):
     """Evaluates the inverse CDF of the gaussian distribution.
 
-    See http://en.wikipedia.org/wiki/Normal_distribution#Quantile_function  
+    See http://en.wikipedia.org/wiki/Normal_distribution#Quantile_function
 
     Args:
         p: float
 
         mu: mean parameter
-        
+
         sigma: standard deviation parameter
-                
+
     Returns:
         float
     """
@@ -1728,7 +1739,7 @@ def BinomialCoef(n, k):
 
 def LogBinomialCoef(n, k):
     """Computes the log of the binomial coefficient.
-
+v
     http://math.stackexchange.com/questions/64716/
     approximating-the-logarithm-of-the-binomial-coefficient
 
@@ -1739,4 +1750,75 @@ def LogBinomialCoef(n, k):
     """
     return n * log(n) - k * log(k) - (n - k) * log(n - k)
 
+class BayesNet(DiGraph, Joint):
+    """
+    A BayesNet is both, a graph and a joint distribution. For now, it only
+    allows for binary variables and positive causal effects (in fact, all causal effects are assumed to be the same).
+    The joint probability is encoded, using the Noisy-OR encoding (Pearl 1988).
+    """
 
+    def __init__(self, data=None, name='', p=0.5, causal_effect=0.5):
+
+        DiGraph.__init__(self, data=data, name=name)
+        Joint.__init__(self)
+        self.p=p
+        self.causal_effect=causal_effect
+        self.n=len(self.nodes())
+        self.support=[]
+
+    def add_edges_from(self, ebunch):
+        #first, we rename the nodes to be indices. This is practical
+        #for manipulating the joint distribution (maybe not ideal).
+        bunchset=set([v for v, b in ebunch] + [b for v, b in ebunch])
+        for i, n in enumerate(bunchset):
+            for l, k in ebunch:
+                index=ebunch.index((l, k))
+                if l==n:
+                    l=i
+                elif k==n:
+                    k=i
+                ebunch[index]=l, k
+
+        DiGraph.add_edges_from(self, ebunch=ebunch)
+
+        fro, to = zip(*self.edges())
+        self.indep_vars=list(set(f for f in fro if f not in set(to)))
+        self.dep_vars  =list(set(to))
+        for var in self.indep_vars:
+            self.node[var]['pmf']=Pmf()
+            self.node[var]['pmf'].Set(1,self.p)
+            self.node[var]['pmf'].Set(0, 1-self.p)
+        #for var in self.dep_vars:
+         #   self.node[var]['pmf']=Pmf()
+         #   self.node[var]['pmf'].Set(1,0) #first set it all to 0
+         #   self.node[var]['pmf'].Set(0, 1)
+
+
+        for w in self.dep_vars:
+            self.node[w]['weight']={}
+
+        for i in self.nodes():
+            for j in self.edge[i]:
+                self.node[j]['weight'][i]=(1-self.causal_effect)
+
+        self.support=[]
+        n=len(self.nodes())
+        for outcome in range(2**n):
+            self.support.append(tuple([(outcome>>i)&1 for i in xrange(n-1,-1,-1)]))
+
+
+        for outcome in self.support:
+            pr=[0]*len(outcome)
+            p_out=1
+            for i in range(len(outcome)):
+                if i in self.indep_vars:
+                    pr[i]=self.node[i]['pmf'].d[outcome[i]]
+                    p_out *=pr[i]
+                else:
+                    tot=1
+                    for node in self.node[i]['weight']:
+                        tot *=(self.node[i]['weight'][node]**outcome[node])
+                    pr[i]=1-tot if outcome[i]==1 else 1-(1-tot)
+                    p_out *=pr[i]
+
+            self.Set(outcome, p_out)
