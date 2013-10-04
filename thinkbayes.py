@@ -29,6 +29,8 @@ import random
 import scipy.stats
 from scipy.special import erf, erfinv
 from networkx import DiGraph
+from numpy import zeros, array
+from math import sqrt, log
 
 def Odds(p):
     """Computes odds for a given probability.
@@ -1769,18 +1771,36 @@ class BayesNet(DiGraph, Joint):
     def add_edges_from(self, ebunch):
         #first, we rename the nodes to be indices. This is practical
         #for manipulating the joint distribution (maybe not ideal).
-        bunchset=set([v for v, b in ebunch] + [b for v, b in ebunch])
+        #newbunch=[e for e in ebunch if len(e)==3]
+        #singletons=[v for v in e for e in ebunch if len(e)==1]
+        self.bunchset=bunchset=set([v for e in ebunch for v in e[:2]])
+
+        self.names=zeros(len(bunchset))
         for i, n in enumerate(bunchset):
-            for l, k in ebunch:
-                index=ebunch.index((l, k))
+            for e in ebunch:
+                index=ebunch.index(e)
+                if len(e)==3:
+                    l, k, dd=e
+                    dd=dd if type(dd)==dict else {'weight': dd}
+                if len(e)==2:
+                    l, k = e
+                    dd={}
                 if l==n:
+                    self.names[i]=n
                     l=i
                 elif k==n:
+                    self.names[i]=n
                     k=i
-                ebunch[index]=l, k
+
+                ebunch[index]=l, k, dd
+
 
         DiGraph.add_edges_from(self, ebunch=ebunch)
-
+        self.n=len(self.nodes())
+        #attach the names:
+        for node in self.nodes():
+            self.node[node]['name']=self.names[node]
+        #number of nodes
         fro, to = zip(*self.edges())
         self.indep_vars=list(set(f for f in fro if f not in set(to)))
         self.dep_vars  =list(set(to))
@@ -1799,7 +1819,12 @@ class BayesNet(DiGraph, Joint):
 
         for i in self.nodes():
             for j in self.edge[i]:
-                self.node[j]['weight'][i]=(1-self.causal_effect)
+                if self.edge[i][j]=={} or 'weight' in self.edge[i][j] and self.edge[i][j]['weight'] in set(['+', '-']):
+                    self.node[j]['weight'][i]=(1-self.causal_effect)
+                elif type(self.edge[i][j]['weight'])==float and self.edge[i][j]['weight'] >=0:
+                    self.node[j]['weight'][i]=(1-self.edge[i][j]['weight'])
+                elif type(self.edge[i][j]['weight'])==float and self.edge[i][j]['weight'] <=0:
+                    self.node[j]['weight'][i]=(1-abs(self.edge[i][j]['weight']))
 
         self.support=[]
         n=len(self.nodes())
@@ -1817,8 +1842,32 @@ class BayesNet(DiGraph, Joint):
                 else:
                     tot=1
                     for node in self.node[i]['weight']:
-                        tot *=(self.node[i]['weight'][node]**outcome[node])
+                        if self.edge[node][i]=={} or 'weight' in self.edge[node][i] and (self.edge[node][i]['weight'] =='+' or type(self.edge[node][i]['weight'])==float and self.edge[node][i]['weight'] >=0):
+                            tot *=((1.0-self.node[i]['weight'][node])**outcome[node])
+                        else:
+                            tot *=((1.0-abs(self.node[i]['weight'][node]))**(1-outcome[node]))
+
                     pr[i]=1-tot if outcome[i]==1 else 1-(1-tot)
                     p_out *=pr[i]
 
             self.Set(outcome, p_out)
+
+    def MakeMixture(self, other, lamb=0.5):
+        mixed = Joint() #mixing the two probability distributions
+        for x, p in self.Items():
+            mixed.Set(x,lamb * p + (1 - lamb) * other.d[x])
+        return mixed
+
+    def KL_divergence(self, other):
+        """ Compute KL divergence of two BayesNets."""
+        try:
+            return sum(p * log((p /other.d[x])) for x, p in self.Items() if p != 0.0 or p != 0)
+        except ZeroDivisionError:
+            return float("inf")
+
+    def JensenShannonDivergence(self, other):
+        JSD = 0.0
+        lamb=0.5
+        mix=self.MakeMixture(other=other, lamb=0.5)
+        JSD=lamb * self.KL_divergence(mix) + lamb * other.KL_divergence(mix)
+        return JSD
