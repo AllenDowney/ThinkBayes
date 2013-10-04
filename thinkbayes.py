@@ -1773,9 +1773,9 @@ class BayesNet(DiGraph, Joint):
         #for manipulating the joint distribution (maybe not ideal).
         #newbunch=[e for e in ebunch if len(e)==3]
         #singletons=[v for v in e for e in ebunch if len(e)==1]
-        self.bunchset=bunchset=set([v for e in ebunch for v in e[:2]])
+        self.bunchset=bunchset=set([v for e in ebunch for v in e[:2]] + self.nodes())
 
-        self.names=zeros(len(bunchset))
+        self.names=list(zeros(len(bunchset)))
         for i, n in enumerate(bunchset):
             for e in ebunch:
                 index=ebunch.index(e)
@@ -1793,7 +1793,12 @@ class BayesNet(DiGraph, Joint):
                     k=i
 
                 ebunch[index]=l, k, dd
-
+            #taking care of the single node case:
+            for node in self.nodes():
+                if node==n:
+                    self.names[i]=n
+                    self.remove_node(node)
+                    self.add_node(i)
 
         DiGraph.add_edges_from(self, ebunch=ebunch)
         self.n=len(self.nodes())
@@ -1802,7 +1807,7 @@ class BayesNet(DiGraph, Joint):
             self.node[node]['name']=self.names[node]
         #number of nodes
         fro, to = zip(*self.edges())
-        self.indep_vars=list(set(f for f in fro if f not in set(to)))
+        self.indep_vars=list(set(f for f in self.nodes() if f not in set(to)))
         self.dep_vars  =list(set(to))
         for var in self.indep_vars:
             self.node[var]['pmf']=Pmf()
