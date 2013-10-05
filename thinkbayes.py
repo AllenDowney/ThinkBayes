@@ -1767,16 +1767,28 @@ class BayesNet(DiGraph, Joint):
         self.causal_effect=causal_effect
         self.n=len(self.nodes())
         self.support=[]
+        self.names=[]
+        self.indep_vars=[]
+        self.dep_vars=[]
 
     def add_edges_from(self, ebunch):
         #first, we rename the nodes to be indices. This is practical
         #for manipulating the joint distribution (maybe not ideal).
         #newbunch=[e for e in ebunch if len(e)==3]
         #singletons=[v for v in e for e in ebunch if len(e)==1]
-        self.bunchset=bunchset=set([v for e in ebunch for v in e[:2]] + self.nodes())
+        if self.names:
+            self.names=sorted(set([v for e in ebunch for v in e[:2]] + self.names))
 
-        self.names=list(zeros(len(bunchset)))
-        for i, n in enumerate(bunchset):
+        #if we don't sort, we get in trouble with comparing joint distributions (the same nodes can be ordered differently)
+            check_bunch=[(self.names[i], self.names[j]) for i, j in self.edges()]
+            if [e[:2] for e in ebunch] in check_bunch:
+                return
+        else:
+            self.names=sorted(set([v for e in ebunch for v in e[:2]]))
+
+
+        for i, n in enumerate(self.names):
+
             for e in ebunch:
                 index=ebunch.index(e)
                 if len(e)==3:
@@ -1785,30 +1797,27 @@ class BayesNet(DiGraph, Joint):
                 if len(e)==2:
                     l, k = e
                     dd={}
+
                 if l==n:
-                    self.names[i]=n
                     l=i
                 elif k==n:
-                    self.names[i]=n
                     k=i
 
                 ebunch[index]=l, k, dd
-            #taking care of the single node case:
             for node in self.nodes():
-                if node==n:
-                    self.names[i]=n
-                    self.remove_node(node)
-                    self.add_node(i)
-
+                if n ==self.node[node]['name']:
+                    self.node[i]={'name': n}
+                    self.edge[i]={}
         DiGraph.add_edges_from(self, ebunch=ebunch)
+
         self.n=len(self.nodes())
         #attach the names:
         for node in self.nodes():
             self.node[node]['name']=self.names[node]
         #number of nodes
         fro, to = zip(*self.edges())
-        self.indep_vars=list(set(f for f in self.nodes() if f not in set(to)))
-        self.dep_vars  =list(set(to))
+        self.indep_vars=sorted(set(f for f in self.nodes() if f not in set(to)))
+        self.dep_vars  =sorted(set(to))
         for var in self.indep_vars:
             self.node[var]['pmf']=Pmf()
             self.node[var]['pmf'].Set(1,self.p)
@@ -1831,6 +1840,10 @@ class BayesNet(DiGraph, Joint):
                 elif type(self.edge[i][j]['weight'])==float and self.edge[i][j]['weight'] <=0:
                     self.node[j]['weight'][i]=(1-abs(self.edge[i][j]['weight']))
 
+        self.SetProbs()
+
+    def SetProbs(self):
+        self.d={}
         self.support=[]
         n=len(self.nodes())
         for outcome in range(2**n):
@@ -1856,6 +1869,40 @@ class BayesNet(DiGraph, Joint):
                     p_out *=pr[i]
 
             self.Set(outcome, p_out)
+
+    def add_nodes_from(self, nodes, **attr):
+        H=copy.deepcopy(self)
+        self.clear()
+        if not H.nodes():
+            DiGraph.add_nodes_from(self, nodes, **attr)
+
+            self.names=names=sorted(nodes)
+            for i, n in enumerate(self.names):
+                self.node[i]={'name': n, 'pmf': Pmf()}
+                self.node[i]['pmf'].Set(1,self.p)
+                self.node[i]['pmf'].Set(0, 1-self.p)
+                self.remove_node(n)
+                self.edge[i]={}
+                self.indep_vars+=[i]
+            self.SetProbs()
+            return
+
+        DiGraph.add_nodes_from(self, nodes, **attr)
+        #ind_vars=[var for var in H.indep_vars]
+        #DiGraph.add_nodes_from(self, ind_vars)
+        self.names=names=sorted(set(H.names + nodes))
+        for i, n in enumerate(names):
+            try:
+                self.node[i], self.edge[i]=H.node[i], H.edge[i]
+            except:
+                self.node[i]={'name': n, 'pmf': Pmf()}
+                self.node[i]['pmf'].Set(1,self.p)
+                self.node[i]['pmf'].Set(0, 1-self.p)
+                self.remove_node(n)
+                self.edge[i]={}
+                self.indep_vars+=[i]
+
+        self.SetProbs()
 
     def MakeMixture(self, other, lamb=0.5):
         mixed = Joint() #mixing the two probability distributions
