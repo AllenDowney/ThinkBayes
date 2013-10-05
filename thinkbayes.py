@@ -1755,7 +1755,9 @@ v
 class BayesNet(DiGraph, Joint):
     """
     A BayesNet is both, a graph and a joint distribution. For now, it only
-    allows for binary variables and positive causal effects (in fact, all causal effects are assumed to be the same).
+    allows for binary variables. All methods that start with capital letters
+    relate more to joint distributions and those that are more graphical start
+    with small letters.
     The joint probability is encoded, using the Noisy-OR encoding (Pearl 1988).
     """
 
