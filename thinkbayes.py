@@ -32,6 +32,10 @@ from networkx import DiGraph
 from numpy import zeros, array
 from math import sqrt, log
 
+#import the beta function for priors on causal effects in BayesNet:
+
+from scipy.stats import beta
+
 def Odds(p):
     """Computes odds for a given probability.
 
@@ -316,7 +320,7 @@ class _DictWrapper(object):
 
     def Total(self):
         """Returns the total of the frequencies/probabilities in the map."""
-        total = sum(self.d.itervalues())
+        total = sum(val for val in self.d.itervalues())
         return total
 
     def MaxLike(self):
@@ -1761,7 +1765,12 @@ class BayesNet(DiGraph, Joint):
     The joint probability is encoded, using the Noisy-OR encoding (Pearl 1988).
     """
 
-    def __init__(self, data=None, name='', p=0.5, causal_effect=0.5):
+    def __init__(self, data=None, name='', p=0.5, causal_effect=0.5, effect_pdf=lambda x, a, b : beta(a, b).pdf(x), a=2, b=2):
+        """
+        Effect pdf is the pdf that a causal effect is assumed to be drawn from. In the absense of a "causal_effect" we integrate over this
+        distribution. This distribution is here assumed to be uniform between 0 and 1, but that can be easily changed (in future versions,
+        I)
+        """
 
         DiGraph.__init__(self, data=data, name=name)
         Joint.__init__(self)
@@ -1772,6 +1781,8 @@ class BayesNet(DiGraph, Joint):
         self.names=[]
         self.indep_vars=[]
         self.dep_vars=[]
+        self.effect_pdf= lambda x: effect_pdf(x, a, b)
+
 
     def add_edges_from(self, ebunch):
         #first, we rename the nodes to be indices. This is practical
@@ -1862,12 +1873,17 @@ class BayesNet(DiGraph, Joint):
                 else:
                     tot=1
                     for node in self.node[i]['weight']:
-                        if self.edge[node][i]=={} or 'weight' in self.edge[node][i] and (self.edge[node][i]['weight'] =='+' or type(self.edge[node][i]['weight'])==float and self.edge[node][i]['weight'] >=0):
+                        if 'weight' in self.edge[node][i] and type(self.edge[node][i]['weight'])==float and self.edge[node][i]['weight'] >=0:
                             tot *=((1.0-self.node[i]['weight'][node])**outcome[node])
-                        else:
+                        elif self.edge[node][i]=={} or 'weight' in self.edge[node][i] and self.edge[node][i]['weight'] =='+':
+                            tot=outer(tot, [self.effect_pdf(w)*(1.0-w)**outcome[node] for w in linspace(0, 1, 100)])
+
+                        elif ('weight' in self.edge[node][i] and self.edge[node][i]['weight'] =='-'):
+                            tot=outer(tot, [self.effect_pdf(w)*(1.0-w)**(1-outcome[node]) for w in linspace(0, 1, 100)])
+                        elif 'weight' in self.edge[node][i] and type(self.edge[node][i]['weight'])==float and self.edge[node][i]['weight']<=0:
                             tot *=((1.0-abs(self.node[i]['weight'][node]))**(1-outcome[node]))
 
-                    pr[i]=1-tot if outcome[i]==1 else 1-(1-tot)
+                    pr[i]=1-mean(tot) if outcome[i]==1 else 1-(1-mean(tot))
                     p_out *=pr[i]
 
             self.Set(outcome, p_out)
