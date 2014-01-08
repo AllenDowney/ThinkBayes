@@ -6,5 +6,5 @@ by Allen B. Downey
 
 Available from Green Tea Press at http://thinkbayes.com.
 
-To be pushlished by O'Reilly Media, August 2013.
+Published by O'Reilly Media, October 2013.
 
