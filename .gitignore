@@ -33,3 +33,6 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Jupiter Notebooks
+.ipynb_checkpoints/
