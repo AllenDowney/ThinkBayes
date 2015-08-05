@@ -36,3 +36,8 @@ nosetests.xml
 
 # Jupiter Notebooks
 .ipynb_checkpoints/
+
+# generated plots
+*.eps
+*.pdf
+*.png

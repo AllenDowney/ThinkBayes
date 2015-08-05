@@ -20,6 +20,7 @@ Cdf: represents a discrete cumulative distribution function
 Pdf: represents a continuous probability density function
 
 """
+from python23 import *
 import bisect
 import copy
 import logging
@@ -31,29 +32,6 @@ import scipy.stats
 from scipy.special import erf, erfinv
 
 
-try:
-    dict.iteritems
-except AttributeError:
-    # Python 3
-    def listvalues(d):
-        return list(d.values())
-    def listitems(d):
-        return list(d.items())
-    def itervalues(d):
-        return iter(d.values())
-    def iteritems(d):
-        return iter(d.items())
-else:
-    # Python 2
-    def listvalues(d):
-        return d.values()
-    def listitems(d):
-        return d.items()
-    # Python 2
-    def itervalues(d):
-        return d.itervalues()
-    def iteritems(d):
-        return d.iteritems()
 
 ROOT2 = math.sqrt(2)
 
@@ -502,6 +480,9 @@ class Pmf(_DictWrapper):
         returns: float probability
         """
         return 1 - (self == obj)
+
+    def __hash__(self):
+        return id(self)
 
     def Normalize(self, fraction=1.0):
         """Normalizes this PMF so the sum of all probs is fraction.
@@ -1403,7 +1384,7 @@ class EstimatedPdf(Pdf):
 
     def MakePmf(self, xs, name=''):
         ps = self.kde.evaluate(xs)
-        pmf = MakePmfFromItems(zip(xs, ps), name=name)
+        pmf = MakePmfFromItems(list(zip(xs, ps)), name=name)
         return pmf
 
 

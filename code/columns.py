@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 """This file contains code related to "Think Stats",
 by Allen B. Downey, available from greenteapress.com
 
@@ -47,7 +49,7 @@ def print_cols(cols):
     cols: list of columns
     """
     for i, col in enumerate(cols):
-        print i, col[0], col[1]
+        print(i, col[0], col[1])
 
 
 def make_col_dict(cols, names):

@@ -23,9 +23,14 @@ class Die(thinkbayes.Pmf):
         name: string
         """
         thinkbayes.Pmf.__init__(self, name=name)
-        for x in xrange(1, sides+1):
+        self.__hash__ = thinkbayes.Pmf.__hash__
+        for x in range(1, sides+1):
             self.Set(x, 1)
         self.Normalize()
+
+    def __hash__(self):
+        return id(self)
+
 
 
 def PmfMax(pmf1, pmf2):
@@ -40,7 +45,7 @@ def PmfMax(pmf1, pmf2):
         for v2, p2 in pmf2.Items():
             res.Incr(max(v1, v2), p1*p2)
     return res
-    
+
 
 def main():
     pmf_dice = thinkbayes.Pmf()
@@ -89,7 +94,7 @@ def main():
 
     thinkplot.Clf()
     thinkplot.PrePlot(num=1)
-    
+
     # compute the distribution of the best attribute the hard way
     best_attr2 = PmfMax(three_exact, three_exact)
     best_attr4 = PmfMax(best_attr2, best_attr2)
@@ -108,7 +113,7 @@ def main():
                 ylabel='Probability',
                 axis=[2, 19, 0, 0.23],
                 formats=FORMATS)
-    
+
 
 
 if __name__ == '__main__':
