@@ -126,7 +126,7 @@ def Binom(n, k, d={}):
     try:
         return d[n, k]
     except KeyError:
-        res = Binom(n-1, k) + Binom(n-1, k-1)
+        res = Binom(n-1, k, d) + Binom(n-1, k-1, d)
         d[n, k] = res
         return res
 
