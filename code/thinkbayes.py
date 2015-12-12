@@ -457,7 +457,7 @@ class Pmf(_DictWrapper):
         return 1 - (self > obj)
 
     def __eq__(self, obj):
-        """Less than.
+        """Equal to.
 
         obj: number or _DictWrapper
 
@@ -469,7 +469,7 @@ class Pmf(_DictWrapper):
             return self.Prob(obj)
 
     def __ne__(self, obj):
-        """Less than.
+        """Not equal to.
 
         obj: number or _DictWrapper
 
