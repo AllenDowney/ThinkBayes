@@ -24,6 +24,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os.path
 import sys
+import warnings
+
+# recent matplotlibs are raising deprecation warnings that
+# we don't worry about.
+warnings.filterwarnings("ignore")
 
 
 sys.path.insert(0, './code') # allow us to import book_format

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 """This file contains code for use with "Think Bayes",
 by Allen B. Downey, available from greenteapress.com
 
@@ -22,7 +24,7 @@ def main():
     suite = Train(hypos)
 
     suite.Update(60)
-    print suite.Mean()
+    print(suite.Mean())
 
     thinkplot.PrePlot(1)
     thinkplot.Pmf(suite)
