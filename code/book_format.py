@@ -1,16 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""Copyright 2015 Roger R Labbe Jr.
-
-
-Code supporting the book
-
-Kalman and Bayesian Filters in Python
-https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python
-
-
-This is licensed under an MIT license. See the LICENSE.txt file
-for more information.
 """
 
 from __future__ import (absolute_import, division, print_function,
@@ -32,29 +21,6 @@ warnings.filterwarnings("ignore")
 
 
 sys.path.insert(0, './code') # allow us to import book_format
-
-def test_filterpy_version():
-    import filterpy
-    min_version = [0,0,25]
-    v = filterpy.__version__
-    tokens = v.split('.')
-    for i,v in enumerate(tokens):
-        if int(v) > min_version[i]:
-            return
-
-    i = len(tokens) - 1
-    if min_version[i] > int(tokens[i]):
-       raise Exception("Minimum FilterPy version supported is {}.{}.{}.\n"
-                       "Please install a more recent version.\n"
-                       "   ex: pip install filterpy --upgrade".format(
-             *min_version))
-    v = int(tokens[0]*1000)
-
-
-# ensure that we have the correct filterpy loaded. This is
-# called when this module is imported at the top of each book
-# chapter so the reader can see that they need to update FilterPy.
-test_filterpy_version()
 
 
 def equal_axis():
