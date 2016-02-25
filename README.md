@@ -5,19 +5,24 @@ Launch now and run interactively by clicking this badge:
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/rlabbe/ThinkBayes)
 
 
-This material was adapted from Alan Downey's Think Bayes 
+This material was adapted from Allen Downey's Think Bayes 
 Github repository by Roger Labbe. 
 
 Mostly I took his code and tex file and converted them into
 a series of Jupyter notebooks. This was sometimes problamatic.
-Alan uses a lot of Python classes, and his exposition splits
-the code across multiple paragraphs. This does not cleanly 
-work in notebooks. Furthermore, most of his code is in .py 
-files. 
+Allen uses a lot of Python classes, and his exposition splits
+the code across multiple paragraphs. It's a great pedagogical
+technique, but does not cleanly work in notebooks, where you have
+to specify the entire class in one cell. Furthermore, most of 
+his code is in .py files. 
 
 I made this work as best I could, but sometimes there were
 authorial decisions that I do not feel comfortable making. 
-The code just doesn't run in those spots. 
+The code just doesn't run in those spots. Sometimes I left
+the code in markdown cells rather than putting it in code
+cells, and then imported the class from the .py file. I kind
+of figured this out as I proceeded, so perhaps there are
+stylistic differences in the back vs the front of the book.
 
 He generates many graphs, but does not supply the source code.
 Maybe the code is in the /code subdirectory? In a few places 
@@ -27,14 +32,14 @@ I don't really have time right now. Pull requests accepted!
 
 There are several places in the text where it was not clear
 to me where he got his datasets. Rather than making something
-up, I just let the code cells fail to execute. I hope Alan
+up, I just let the code cells fail to execute. I hope Allen
 will help me rectify these situations. If not, and there is
 enough interest, we can make some decisions and get the cells
 working.
 
-
 I put his code in a /code subdirectory. I did not fix the references
 in the book, which specify going to his home page to get the code.
+Again, I wanted to make as few editorial decisions as possible.
 
 I did alter most of the code to work with Python 3. Mainly by using
 
