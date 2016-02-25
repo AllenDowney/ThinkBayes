@@ -1,7 +1,9 @@
 ThinkBayes
 ==========
 
-Launch now and run interactively by clicking this badge: 
+Launch now and run interactively by clicking this badge,
+then navigate to the \notebooks directory and open the
+notebook corresponding to the chapter you want to read: 
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/rlabbe/ThinkBayes)
 
 
