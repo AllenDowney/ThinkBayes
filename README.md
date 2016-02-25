@@ -1,6 +1,10 @@
 ThinkBayes
 ==========
 
+Launch now and run interactively by clicking this badge: 
+[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/rlabbe/ThinkBayes)
+
+
 This material was adapted from Alan Downey's Think Bayes 
 Github repository by Roger Labbe. 
 
