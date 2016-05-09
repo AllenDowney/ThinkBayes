@@ -30,7 +30,7 @@ hevea:
 # the following greps are a kludge to prevent imagen from seeing
 # the definitions in latexonly, and to avoid headers on the images
 	grep -v latexonly thinkbayes.image.tex > a; mv a thinkbayes.image.tex
-	grep -v fancyhdr thinkbayes.image.tex > a; mv a thinkbayes.image.tex
+	sed s/\\\\usepackage{fancyhdr}// < thinkpython2.image.tex > a; mv a thinkpython2.image.tex
 	imagen -png thinkbayes
 	hacha thinkbayes.html
 	cp up.png next.png back.png html
@@ -45,8 +45,6 @@ distrib:
 	rsync -a thinkbayes.pdf html cover_nolines.png dist
 	rsync -a Makefile book.tex latexonly htmlonly dist/tex
 	# rsync -a figs/*.fig figs/*.eps dist/tex/figs
-	cd dist; zip -r thinkbayes.tex.zip tex
-	cd dist; zip -r thinkbayes.html.zip html
 	rsync -a dist/* $(DEST)
 	chmod -R o+r $(DEST)/*
 	cd /home/downey/public_html/greent; sh back

@@ -31,7 +31,7 @@
 \author{Allen B. Downey}
 
 \newcommand{\thetitle}{Think Bayes: Bayesian Statistics Made Simple}
-\newcommand{\theversion}{1.0.5}
+\newcommand{\theversion}{1.0.8}
 
 % these styles get translated in CSS for the HTML version
 \newstyle{a:link}{color:black;}
@@ -69,6 +69,12 @@
 
 \else
 
+\newtheorem{exercise}{Exercise}[chapter]
+
+\input{latexonly}
+
+\begin{latexonly}
+
 \newtheoremstyle{exercise}% name of the style to be used
   {\topsep}% measure of space to leave above the theorem. E.g.: 3pt
   {\topsep}% measure of space to leave below the theorem. E.g.: 3pt
@@ -80,11 +86,6 @@
   {}% Manually specify head
 
 \theoremstyle{exercise}
-\newtheorem{exercise}{Exercise}[chapter]
-
-\input{latexonly}
-
-\begin{latexonly}
 
 \renewcommand{\blankpage}{\thispagestyle{empty} \quad \newpage}
 
@@ -315,38 +316,82 @@ optimized code yields the same results, at least approximately).
 \section{Working with the code}
 \label{download}
 
-Many of the examples in this book use classes and functions
-defined in {\tt thinkbayes.py}.  You can download this module
-from \url{http://thinkbayes.com/thinkbayes.py}.
+The code and sound samples used in this book are available from
+\url{https://github.com/AllenDowney/ThinkBayes}.  Git is a version
+control system that allows you to keep track of the files that
+make up a project.  A collection of files under Git's control is
+called a ``repository''.  GitHub is a hosting service that provides
+storage for Git repositories and a convenient web interface.
+\index{repository}
+\index{Git}
+\index{GitHub}
 
-Most chapters contain references to code you can download from
-\url{http://thinkbayes.com}.  Some of those files have
-dependencies you will also have to download.  I suggest you
-keep all of these files in the same directory so they can import
-each other without changing the Python search path.
+The GitHub homepage for my repository provides several ways to
+work with the code:
 
-You can download these files one at a time as you need them, or you
-can download them all at once from
-\url{http://thinkbayes.com/thinkbayes_code.zip}.  This file also
-contains the data files used by some of the programs.  When you unzip
-it, it creates a directory named \verb"thinkbayes_code" that contains
-all the code used in this book.
+\begin{itemize}
 
-Or, if you are a Git user, you can get all of the files at once by
-forking and cloning this repository:
-\url{https://github.com/AllenDowney/ThinkBayes}.
+\item You can create a copy of my repository
+on GitHub by pressing the {\sf Fork} button.  If you don't already
+have a GitHub account, you'll need to create one.  After forking, you'll
+have your own repository on GitHub that you can use to keep track
+of code you write while working on this book.  Then you can
+clone the repo, which means that you copy the files
+to your computer.
+\index{fork}
 
-One of the modules I use is {\tt thinkplot.py}, which provides
-wrappers for some of the functions in {\tt pyplot}.  To use it, you
-need to install {\tt matplotlib}.  If you don't already have it, check
-your package manager to see if it is available.  Otherwise you can get
-download instructions from \url{http://matplotlib.org}.
-\index{thinkplot}
+\item Or you could clone
+my repository.  You don't need a GitHub account to do this, but you
+won't be able to write your changes back to GitHub.
+\index{clone}
 
-Finally, some programs in this book use NumPy and SciPy, which are
-available from \url{http://numpy.org} and \url{http://scipy.org}.
-\index{numpy}
-\index{scipy}
+\item If you don't want to use Git at all, you can download the files
+in a Zip file using the button in the lower-right corner of the
+GitHub page.
+
+\end{itemize}
+
+The code for the first edition of the book works with Python 2.
+If you are using Python 3, you might want to use the updated code
+in \url{https://github.com/AllenDowney/ThinkBayes2} instead.
+
+I developed this book using Anaconda from
+Continuum Analytics, which is a free Python distribution that includes
+all the packages you'll need to run the code (and lots more).
+I found Anaconda easy to install.  By default it does a user-level
+installation, not system-level, so you don't need administrative
+privileges.  You can
+download Anaconda from \url{http://continuum.io/downloads}.
+\index{Anaconda}
+
+If you don't want to use Anaconda, you will need the following
+packages:
+
+\begin{itemize}
+
+\item NumPy for basic numerical computation, \url{http://www.numpy.org/};
+\index{NumPy}
+
+\item SciPy for scientific computation,
+  \url{http://www.scipy.org/};
+\index{SciPy}
+
+\item matplotlib for visualization, \url{http://matplotlib.org/}.
+\index{matplotlib}
+
+\end{itemize}
+
+Although these are commonly used packages, they are not included with
+all Python installations, and they can be hard to install in some
+environments.  If you have trouble installing them, I
+recommend using Anaconda or one of the other Python distributions
+that include these packages.
+\index{installation}
+
+Many of the examples in this book use classes and functions defined in
+{\tt thinkbayes.py}.  Some of them also use {\tt thinkplot.py}, which
+provides wrappers for some of the functions in {\tt pyplot}, which is
+part of {\tt matplotlib}.  
 
 
 \section{Code style}
@@ -391,10 +436,9 @@ Chapter~\ref{intro} is about probability and Bayes's theorem; it has
 no code.  Chapter~\ref{compstat} introduces {\tt Pmf}, a thinly disguised
 Python dictionary I use to represent a probability mass function
 (PMF).  Then Chapter~\ref{estimation} introduces {\tt Suite}, a kind
-of Pmf that provides a framework for doing Bayesian updates.  And
-that's just about all there is to it.
+of Pmf that provides a framework for doing Bayesian updates.
 
-Well, almost.  In some of the later chapters, I use
+In some of the later chapters, I use
 analytic distributions including the Gaussian (normal) distribution,
 the exponential and Poisson distributions, and the beta distribution.
 In Chapter~\ref{species} I break out the less-common Dirichlet
@@ -480,6 +524,10 @@ with replacement is an unrealistic scenario.
 \item Ben Kahle found a reference to the wrong figure.
 
 \item Jeffrey Law found an inconsistency between the text and the code.
+
+\item Linda Pescatore found a typo and made some helpful suggestions.
+
+\item Tomasz Mi\k{a}sko sent many excellent corrections and suggestions.
 
 % ENDCONTRIB
 
@@ -2446,8 +2494,10 @@ The beta distribution is defined on the interval from 0 to 1
 (including both), so it is a natural choice for describing
 proportions and probabilities.  But wait, it gets better.
 
+%TODO: explain the binomial distribution in the previous section
+
 It turns out that if you do a Bayesian update with a binomial
-likelihood function, as we did in the previous section, the beta
+likelihood function, which is what we did in the previous section, the beta
 distribution is a {\bf conjugate prior}.  That means that if the prior
 distribution for {\tt x} is a beta distribution, the posterior is also
 a beta distribution.  But wait, it gets even better.
@@ -2553,7 +2603,7 @@ priors and found that with a large dataset, the priors get
 swamped.  If two people start with different
 prior beliefs, they generally find, as they see more data, that
 their posterior distributions converge.  At some point the
-difference between their distribution is small enough that it has
+difference between their distributions is small enough that it has
 no practical effect.
 \index{swamping the priors}
 \index{convergence}
@@ -5174,7 +5224,7 @@ analysis from Section~\ref{elapsed} and run it for a range of
 
 But there's a problem.
 The analysis is sensitive to the frequency of long delays, and
-because long delays are rare, it is hard estimate
+because long delays are rare, it is hard to estimate
 their frequency.
 
 I only have data from one week,
@@ -5952,8 +6002,6 @@ represents a map from each {\tt mu, sigma} pair to its probability:
 class Height(thinkbayes.Suite, thinkbayes.Joint):
 
     def __init__(self, mus, sigmas):
-        thinkbayes.Suite.__init__(self)
-
         pairs = [(mu, sigma) 
                  for mu in mus
                  for sigma in sigmas]
@@ -6962,7 +7010,7 @@ $>$ 100 & Decisive \\
 \end{tabular}
 
 In the example, the Bayes factor is 0.47 in favor of \verb"B_uniform",
-so it is 2.1 in favor is $F$, which Jeffreys would consider ``barely
+so it is 2.1 in favor of $F$, which Jeffreys would consider ``barely
 worth mentioning.''  Other authors have suggested variations on the
 wording.  To avoid arguing about adjectives, we could think about odds
 instead.
@@ -7104,7 +7152,8 @@ class Exam(object):
         scores = ReadRanks()
         score_pmf = thinkbayes.MakePmfFromDict(dict(scores))
         self.raw = self.ReverseScale(score_pmf)
-        self.prior = DivideValues(raw, 54)
+        self.max_score = max(self.raw.Values())
+        self.prior = DivideValues(self.raw, self.max_score)
 \end{verbatim}
 
 {\tt Exam} encapsulates the information we have about the exam.
@@ -7297,7 +7346,7 @@ we need a better model.
 
 In the next few sections, I develop a better model and 
 discover (spoiler alert!) that the modeling error is small.  So if
-you are satisfied with the simple mode, you can skip to the next
+you are satisfied with the simple model, you can skip to the next
 chapter.  If you want to see how the more realistic model works,
 read on...
 
@@ -8482,7 +8531,7 @@ That's what {\tt SuiteLikelihood} does:
 Now we can write the Likelihood function for the Emitter:
 
 \begin{verbatim}
-# class Detector
+# class Emitter
 
     def Likelihood(self, data, hypo):
         detector = hypo
@@ -8498,7 +8547,7 @@ After we update the Emitter, we have to update each of the
 Detectors, too.  
 
 \begin{verbatim}
-# class Detector
+# class Emitter
 
     def Update(self, data):
         thinkbayes.Suite.Update(self, data)
@@ -8723,7 +8772,7 @@ If we have an equal chance of observing any animal in the preserve,
 the number of each species we see is governed by the multinomial
 distribution.  If the prevalence of lions and tigers and bears is
 \verb"p_lion" and \verb"p_tiger" and \verb"p_bear", the likelihood of
-seeing 3 lions, 2 tigers and one bear is
+seeing 3 lions, 2 tigers and one bear is proportional to
 \index{multinomial distribution}
 
 \begin{verbatim}
