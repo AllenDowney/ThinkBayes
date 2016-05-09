@@ -456,7 +456,7 @@ def RunEstimate(update_func, num_points=31, median_flag=False):
     update_func: which of the update functions to use
     num_points: number of points in the Suite (in each dimension)
     """
-    # DumpHeights(n=10000000)
+    DumpHeights(n=10000000)
     d = LoadHeights()
     labels = {1:'male', 2:'female'}
 
