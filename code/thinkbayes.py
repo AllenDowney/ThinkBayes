@@ -27,7 +27,7 @@ import numpy
 import random
 
 import scipy.stats
-from scipy.special import erf, erfinv
+from scipy.special import erf, erfinv, gammaln
 
 ROOT2 = math.sqrt(2)
 
@@ -1538,11 +1538,7 @@ def EvalPoissonPmf(k, lam):
 
     returns: float probability
     """
-    # don't use the scipy function (yet).  for lam=0 it returns NaN;
-    # should be 0.0
-    # return scipy.stats.poisson.pmf(k, lam)
-
-    return lam ** k * math.exp(-lam) / math.factorial(k)
+    return scipy.stats.poisson.pmf(k, lam)
 
 
 def MakePoissonPmf(lam, high, step=1):

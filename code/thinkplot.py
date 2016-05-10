@@ -202,7 +202,7 @@ def Plot(obj, ys=None, style='', **options):
       options: keyword args passed to pyplot.plot
     """
     options = _UnderrideColor(options)
-    label = getattr(obj, 'label', '_nolegend_')
+    label = getattr(obj, 'name', '_nolegend_')
     options = _Underride(options, linewidth=3, alpha=0.8, label=label)
 
     xs = obj
@@ -285,7 +285,7 @@ def Pdf(pdf, **options):
     low, high = options.pop('low', None), options.pop('high', None)
     n = options.pop('n', 101)
     xs, ps = pdf.Render(low=low, high=high, n=n)
-    options = _Underride(options, label=pdf.label)
+    options = _Underride(options, label=pdf.name)
     Plot(xs, ps, **options)
 
 
@@ -327,7 +327,7 @@ def Hist(hist, **options):
                             "Or try providing width option."
                             )
 
-    options = _Underride(options, label=hist.label)
+    options = _Underride(options, label=hist.name)
     options = _Underride(options, align='center')
     if options['align'] == 'left':
         options['align'] = 'edge'
@@ -394,7 +394,7 @@ def Pmf(pmf, **options):
     if align == 'right':
         pxs = np.array(pxs) - width
 
-    options = _Underride(options, label=pmf.label)
+    options = _Underride(options, label=pmf.name)
     Plot(pxs, pys, **options)
 
 
@@ -473,7 +473,7 @@ def Cdf(cdf, complement=False, transform=None, **options):
         ps = [-math.log(p) for p in ps]
         scale['yscale'] = 'log'
 
-    options = _Underride(options, label=cdf.label)
+    options = _Underride(options, label=cdf.name)
     Plot(xs, ps, **options)
     return scale
 
