@@ -58,8 +58,7 @@ def main():
 
     mix = thinkbayes.MakeMixture(pmf_dice)
 
-    colors = thinkplot.Brewer.Colors()
-    thinkplot.Hist(mix, width=0.9, color=colors[4])
+    thinkplot.Hist(mix, width=0.9)
     thinkplot.Save(root='dungeons3',
                 xlabel='Outcome',
                 ylabel='Probability',
