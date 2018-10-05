@@ -4815,14 +4815,14 @@ passengers.
 \verb"pmf_y" is the distribution of wait time.  \verb"pmf_x" is the
 distribution of elapsed time, which is the same as the distribution of
 wait time.  To see why, remember that for a particular value of
-{\tt zp}, the distribution of {\tt y} is uniform from 0 to {\tt zp}.
+{\tt zb}, the distribution of {\tt y} is uniform from 0 to {\tt zb}.
 Also
 %
 \begin{verbatim}
-x = zp - y
+x = zb - y
 \end{verbatim}
 %
-So the distribution of {\tt x} is also uniform from 0 to {\tt zp}.
+So the distribution of {\tt x} is also uniform from 0 to {\tt zb}.
 
 Figure~\ref{fig.redline2} shows the distribution of {\tt z}, {\tt zb},
 and {\tt y} based on the data I collected from the Red Line web site.
@@ -5609,7 +5609,7 @@ When each value in a distribution is a tuple of variables, it is
 called a {\bf joint distribution} because it represents the
 distributions of the variables together, that is ``jointly''.
 A joint distribution contains the distributions of the variables,
-as well information about the relationships among them.
+as well as information about the relationships among them.
 \index{joint distribution}
 
 Given a joint distribution, we can compute the distributions
@@ -5847,7 +5847,7 @@ There is a lot of new vocabulary in this chapter, so let's review:
 
 \item[Conditional distribution:] The distribution of one parameter in
   a joint distribution, conditioned on one or more of the other
-  parameters.  Figure~\ref{fig.paintball3} several distributions for
+  parameters.  Figure~\ref{fig.paintball3} shows several distributions for
   {\tt alpha}, conditioned on different values of {\tt beta}.
 
 \end{description}
