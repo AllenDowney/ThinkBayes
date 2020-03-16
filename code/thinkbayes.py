@@ -283,7 +283,7 @@ class _DictWrapper(object):
     def Print(self):
         """Prints the values and freqs/probs in ascending order."""
         for val, prob in sorted(self.d.iteritems()):
-            print val, prob
+            print(val, prob)
 
     def Set(self, x, y=0):
         """Sets the freq/prob associated with the value x.
@@ -1223,7 +1223,7 @@ class Suite(Pmf):
     def Print(self):
         """Prints the hypotheses and their probabilities."""
         for hypo, prob in sorted(self.Items()):
-            print hypo, prob
+            print(hypo, prob)
 
     def MakeOdds(self):
         """Transforms from probabilities to odds.
