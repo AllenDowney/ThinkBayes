@@ -1,8 +1,9 @@
 % LaTeX source for ``Think Bayes: Bayesian Statistics Made Simple''
 % Copyright 2012  Allen B. Downey.
 
-% License: Creative Commons Attribution-NonCommercial 3.0 Unported License.
-% http://creativecommons.org/licenses/by-nc/3.0/
+% License: Creative Commons 
+% Attribution-NonCommercial-ShareAlike 4.0 International
+% http://creativecommons.org/licenses/by-nc-sa/4.0/
 %
 
 \documentclass[12pt]{book}
@@ -13,25 +14,33 @@
 % texlive-latex-extra (in Ubuntu)
 
 \usepackage[T1]{fontenc}
-\usepackage{textcomp}
-\usepackage{mathpazo}
+%\usepackage{textcomp}
+%\usepackage{mathpazo}
+%\usepackage{pslatex}
+
 \usepackage{url}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{subfig}
 \usepackage{amsmath}
 \usepackage{amsthm}
+%\usepackage{amssymb}
 \usepackage{makeidx}
 \usepackage{setspace}
-\usepackage{hevea}                           
+\usepackage{hevea}
 \usepackage{upquote}
-\usepackage{fancyhdr}
-\usepackage[bookmarks]{hyperref}
+
+% include this so we can compile without hyperref
+% https://tex.stackexchange.com/questions/44088/when-do-i-need-to-invoke-phantomsection
+\providecommand\phantomsection{}
 
 \title{Think Bayes}
 \author{Allen B. Downey}
 
-\newcommand{\thetitle}{Think Bayes: Bayesian Statistics Made Simple}
-\newcommand{\theversion}{1.0.8}
+\newcommand{\thetitle}{Think Bayes}
+\newcommand{\thesubtitle}{Bayesian Statistics Made Simple}
+\newcommand{\theversion}{1.0.9}
 
 % these styles get translated in CSS for the HTML version
 \newstyle{a:link}{color:black;}
@@ -40,9 +49,9 @@
 
 % change the arrows in the HTML version
 \setlinkstext
-  {\imgsrc[ALT="Previous"]{back.png}}
-  {\imgsrc[ALT="Up"]{up.png}}
-  {\imgsrc[ALT="Next"]{next.png}} 
+  {\imgsrc[alt="Previous"]{back.png}}
+  {\imgsrc[alt="Up"]{up.png}}
+  {\imgsrc[alt="Next"]{next.png}}
 
 \makeindex
 
@@ -53,10 +62,6 @@
 
 \frontmatter
 
-\ifplastex
-
-\else
-\fi
 
 \newcommand{\PMF}{\mathrm{PMF}}
 \newcommand{\PDF}{\mathrm{PDF}}
@@ -67,26 +72,35 @@
     \usepackage{localdef}
     \maketitle
 
+\newcount\anchorcnt
+\newcommand*{\Anchor}[1]{%
+  \@bsphack%
+    \Hy@GlobalStepCount\anchorcnt%
+    \edef\@currentHref{anchor.\the\anchorcnt}% 
+    \Hy@raisedlink{\hyper@anchorstart{\@currentHref}\hyper@anchorend}% 
+    \M@gettitle{}\label{#1}% 
+    \@esphack%
+}
 \else
-
-\newtheorem{exercise}{Exercise}[chapter]
-
-\input{latexonly}
-
-\begin{latexonly}
 
 \newtheoremstyle{exercise}% name of the style to be used
   {\topsep}% measure of space to leave above the theorem. E.g.: 3pt
   {\topsep}% measure of space to leave below the theorem. E.g.: 3pt
   {}% name of font to use in the body of the theorem
-  {0pt}% measure of space to indent
+  {}% measure of space to indent
   {\bfseries}% name of head font
   {}% punctuation between head and body
   { }% space after theorem head; " " = normal interword space
   {}% Manually specify head
 
 \theoremstyle{exercise}
+\newtheorem{exercise}{Exercise}[chapter]
 
+\input{latexonly}
+
+\begin{latexonly}
+
+\renewcommand{\topfraction}{0.9}
 \renewcommand{\blankpage}{\thispagestyle{empty} \quad \newpage}
 
 % TITLE PAGES FOR LATEX VERSION
@@ -98,8 +112,8 @@
 \vspace*{2.0in}
 
 \begin{spacing}{3}
-{\huge Think Bayes}\\
-{\Large Bayesian Statistics Made Simple}
+{\huge \thetitle}\\
+{\Large \thesubtitle}
 \end{spacing}
 
 \vspace{0.25in}
@@ -123,8 +137,8 @@ Version \theversion
 \vspace*{2.0in}
 
 \begin{spacing}{3}
-{\huge Think Bayes}\\
-{\Large Bayesian Statistics Made Simple}
+{\huge \thetitle}\\
+{\Large \thesubtitle}
 \end{spacing}
 
 \vspace{0.25in}
@@ -166,8 +180,14 @@ Needham MA 02492
 \end{flushleft}
 
 Permission is granted to copy, distribute, and/or modify this document
-under the terms of the Creative Commons Attribution-NonCommercial 3.0 Unported
-License, which is available at \url{http://creativecommons.org/licenses/by-nc/3.0/}.
+under the terms of the Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License, which
+is available at
+\url{http://creativecommons.org/licenses/by-nc-sa/4.0/}.
+
+
+The \LaTeX\ source for this book is available from
+\url{http://greenteapress.com/thinkbayes}.
 
 \vspace{0.2in}
 
@@ -180,7 +200,7 @@ License, which is available at \url{http://creativecommons.org/licenses/by-nc/3.
 
 % TITLE PAGE FOR HTML VERSION
 
-{\Large \thetitle}
+{\Large \thetitle: \thesubtitle}
 
 {\large Allen B. Downey}
 
@@ -193,9 +213,10 @@ Copyright 2012 Allen B. Downey
 \vspace{0.25in}
 
 Permission is granted to copy, distribute, and/or modify this document
-under the terms of the Creative Commons Attribution-NonCommercial 3.0
+under the terms of the Creative Commons 
+Attribution-NonCommercial-ShareAlike 4.0 International
 Unported License, which is available at
-\url{http://creativecommons.org/licenses/by-nc/3.0/}.
+\url{http://creativecommons.org/licenses/by-nc-sa/4.0/}.
 
 \setcounter{chapter}{-1}
 
@@ -482,27 +503,16 @@ Thanks!
   Python User Group, so I would like to thank them for their
   company and pizza.
 
-\item Jonathan Edwards sent in the first typo.
-
-\item George Purkins found a markup error.
-
 \item Olivier Yiptong sent several helpful suggestions.
 
 \item Yuriy Pasichnyk found several errors.
 
 \item Kristopher Overholt sent a long list of corrections and suggestions.
 
-\item Robert Marcus found a misplaced {\it i}.
-
 \item Max Hailperin suggested a clarification in Chapter~\ref{intro}.
 
 \item Markus Dobler pointed out that drawing cookies from a bowl
 with replacement is an unrealistic scenario.
-
-\item Tom Pollard and Paul A. Giannaros spotted a version problem with
-  some of the numbers in the train example.
-
-\item Ram Limbu found a typo and suggested a clarification.
 
 \item In spring 2013, students in my class, Computational Bayesian
   Statistics, made many helpful corrections and suggestions: Kai
@@ -519,12 +529,6 @@ with replacement is an unrealistic scenario.
 \item Jasmine Kwityn and Dan Fauxsmith at O'Reilly Media proofread the
   book and found many opportunities for improvement.
 
-\item James Lawry spotted a math error.
-
-\item Ben Kahle found a reference to the wrong figure.
-
-\item Jeffrey Law found an inconsistency between the text and the code.
-
 \item Linda Pescatore found a typo and made some helpful suggestions.
 
 \item Tomasz Mi\k{a}sko sent many excellent corrections and suggestions.
@@ -532,6 +536,18 @@ with replacement is an unrealistic scenario.
 % ENDCONTRIB
 
 \end{itemize}
+
+Other people who spotted typos and small errors include
+Tom Pollard,
+Paul A. Giannaros,
+Jonathan Edwards,
+George Purkins,
+Robert Marcus,
+Ram Limbu,
+James Lawry,
+Ben Kahle,
+Jeffrey Law, and
+Alvaro Sanchez.
 
 \normalsize
 
@@ -4092,7 +4108,7 @@ def MakeGaussianPmf(mu, sigma, num_sigmas, n=101):
     high = mu + num_sigmas*sigma
 
     for x in numpy.linspace(low, high, n):
-        p = scipy.stats.norm.pdf(mu, sigma, x)
+        p = scipy.stats.norm.pdf(x, mu, sigma)
         pmf.Set(x, p)
     pmf.Normalize()
     return pmf
@@ -4815,14 +4831,14 @@ passengers.
 \verb"pmf_y" is the distribution of wait time.  \verb"pmf_x" is the
 distribution of elapsed time, which is the same as the distribution of
 wait time.  To see why, remember that for a particular value of
-{\tt zb}, the distribution of {\tt y} is uniform from 0 to {\tt zb}.
+{\tt zp}, the distribution of {\tt y} is uniform from 0 to {\tt zp}.
 Also
 %
 \begin{verbatim}
-x = zb - y
+x = zp - y
 \end{verbatim}
 %
-So the distribution of {\tt x} is also uniform from 0 to {\tt zb}.
+So the distribution of {\tt x} is also uniform from 0 to {\tt zp}.
 
 Figure~\ref{fig.redline2} shows the distribution of {\tt z}, {\tt zb},
 and {\tt y} based on the data I collected from the Red Line web site.
@@ -5419,9 +5435,9 @@ notation follows the presentation of the problem in D.S.~Sivia's, {\it Data
 \index{Sivia, D.S.}
 
 You can download the code in this chapter from
-\url{http://thinkbayes.com/paintball.py}.
-  For more information
-see Section~\ref{download}.
+\url{http://thinkbayes.com/paintball.py}.  For more information see
+Section~\ref{download}.
+
 
 \section{The suite}
 

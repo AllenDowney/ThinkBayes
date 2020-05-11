@@ -1,53 +1,41 @@
-LATEX = latex
-
-DVIPS = dvips
-
 PDFFLAGS = -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress \
            -dCompressPages=true -dUseFlateCompression=true  \
            -dEmbedAllFonts=true -dSubsetFonts=true -dMaxSubsetPct=100
 
 
-%.dvi: %.tex
-	$(LATEX) $<
-
-%.ps: %.dvi
-	$(DVIPS) -o $@ $<
-
-%.pdf: %.ps
-	ps2pdf $(PDFFLAGS) $<
-
 all:	book.tex
 	pdflatex book
 	makeindex book.idx
+	pdflatex book
 	mv book.pdf thinkbayes.pdf
 	evince thinkbayes.pdf
+
+HEVEABUILDLOG=build.log
 
 hevea:
 	sed 's/\(figs\/[^.]*\).\(pdf\|png\)/\1.eps/' book.tex > thinkbayes.tex
 	rm -rf html
 	mkdir html
-	hevea -O -e latexonly htmlonly thinkbayes
+	hevea macros.hva -O -e latexonly htmlonly thinkbayes 2>&1 | tee ${HEVEABUILDLOG}
 # the following greps are a kludge to prevent imagen from seeing
 # the definitions in latexonly, and to avoid headers on the images
 	grep -v latexonly thinkbayes.image.tex > a; mv a thinkbayes.image.tex
-	sed s/\\\\usepackage{fancyhdr}// < thinkpython2.image.tex > a; mv a thinkpython2.image.tex
+	sed s/\\\\usepackage{fancyhdr}// < thinkbayes.image.tex > a; mv a thinkbayes.image.tex
 	imagen -png thinkbayes
 	hacha thinkbayes.html
 	cp up.png next.png back.png html
-	mv index.html thinkbayes.css thinkbayes*.html  html
-	mv thinkbayes*.png *motif.gif html
+	cp custom.css thinkbayes.css
+	mv index.html thinkbayes.css thinkbayes*.html thinkbayes*.png *motif.gif html
 
 DEST = /home/downey/public_html/greent/thinkbayes
 
 distrib:
 	rm -rf dist
-	mkdir dist dist/tex dist/tex/figs
-	rsync -a thinkbayes.pdf html cover_nolines.png dist
-	rsync -a Makefile book.tex latexonly htmlonly dist/tex
-	# rsync -a figs/*.fig figs/*.eps dist/tex/figs
+	mkdir dist
+	rsync -a thinkbayes.pdf html dist
 	rsync -a dist/* $(DEST)
 	chmod -R o+r $(DEST)/*
-	cd /home/downey/public_html/greent; sh back
+	cd $(DEST)/..; sh back
 
 plastex:
 	# Before running plastex, we need the current directory in PYTHONPATH
@@ -57,21 +45,19 @@ plastex:
 	rm -rf /home/downey/thinkbayes/trunk/book/.svn
 
 xxe:
-	xmlcopyeditor ~/thinkstats/trunk/thinkbayes/book/book.xml &
-	#~/Downloads/xxe-perso-4_8_0/bin/xxe book/book.xml
+	xmlcopyeditor ~/ThinkBayes/book/book/book.xml &
 
 lint:
 	xmllint -noout book/book.xml
 
-OREILLY = ~/oreilly/thinkbayes
+OREILLY = atlas
 
 oreilly:
 	rsync -a book/ $(OREILLY)
 	rsync -a figs/* $(OREILLY)/figs/
 	cd $(OREILLY); git add .
 	cd $(OREILLY); git commit -m "Automated check in."
-	cd $(OREILLY); git push origin master
-	#cp thinkbayes.pdf ~/oreilly/1234000001745/pdf
+	cd $(OREILLY); git push
 
 clean:
 	rm -f *~ *.aux *.log *.dvi *.idx *.ilg *.ind *.toc
