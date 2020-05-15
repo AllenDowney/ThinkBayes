@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 from thinkbayes import Pmf
 
@@ -53,7 +54,7 @@ def main():
     pmf.Update(data)
 
     for hypo, prob in sorted(pmf.Items()):
-        print hypo, prob
+        print(hypo, prob)
 
 
 if __name__ == '__main__':

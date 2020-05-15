@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 """This file contains a partial solution to a problem from
 MacKay, "Information Theory, Inference, and Learning Algorithms."
@@ -59,7 +60,7 @@ class Euro2(thinkbayes.Suite):
 
 def UniformPrior():
     """Makes a Suite with a uniform prior."""
-    suite = Euro(xrange(0, 101))
+    suite = Euro(range(0, 101))
     return suite
 
 
@@ -89,17 +90,17 @@ def RunUpdate(suite, heads=140, tails=110):
 
 def Summarize(suite):
     """Prints summary statistics for the suite."""
-    print suite.Prob(50)
+    print(suite.Prob(50))
 
-    print 'MLE', suite.MaximumLikelihood()
+    print('MLE', suite.MaximumLikelihood())
 
-    print 'Mean', suite.Mean()
-    print 'Median', thinkbayes.Percentile(suite, 50) 
+    print('Mean', suite.Mean())
+    print('Median', thinkbayes.Percentile(suite, 50))
 
-    print '5th %ile', thinkbayes.Percentile(suite, 5) 
-    print '95th %ile', thinkbayes.Percentile(suite, 95) 
+    print('5th %ile', thinkbayes.Percentile(suite, 5))
+    print('95th %ile', thinkbayes.Percentile(suite, 95))
 
-    print 'CI', thinkbayes.CredibleInterval(suite, 90)
+    print('CI', thinkbayes.CredibleInterval(suite, 90))
 
 
 def PlotSuites(suites, root):

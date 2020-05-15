@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 """This file contains a partial solution to a problem from
 MacKay, "Information Theory, Inference, and Learning Algorithms."
@@ -72,32 +73,32 @@ def Main():
 
     suite = Euro()
     like_f = suite.Likelihood(data, 50)
-    print 'p(D|F)', like_f
+    print('p(D|F)', like_f)
 
     actual_percent = 100.0 * 140 / 250
     likelihood = suite.Likelihood(data, actual_percent)
-    print 'p(D|B_cheat)', likelihood
-    print 'p(D|B_cheat) / p(D|F)', likelihood / like_f
+    print('p(D|B_cheat)', likelihood)
+    print('p(D|B_cheat) / p(D|F)', likelihood / like_f)
 
     like40 = suite.Likelihood(data, 40)
     like60 = suite.Likelihood(data, 60)
     likelihood = 0.5 * like40 + 0.5 * like60
-    print 'p(D|B_two)', likelihood
-    print 'p(D|B_two) / p(D|F)', likelihood / like_f
+    print('p(D|B_two)', likelihood)
+    print('p(D|B_two) / p(D|F)', likelihood / like_f)
 
-    b_uniform = Euro(xrange(0, 101))
+    b_uniform = Euro(range(0, 101))
     b_uniform.Remove(50)
     b_uniform.Normalize()
     likelihood = SuiteLikelihood(b_uniform, data)
-    print 'p(D|B_uniform)', likelihood
-    print 'p(D|B_uniform) / p(D|F)', likelihood / like_f
+    print('p(D|B_uniform)', likelihood)
+    print('p(D|B_uniform) / p(D|F)', likelihood / like_f)
 
     b_tri = TrianglePrior()
     b_tri.Remove(50)
     b_tri.Normalize()
     likelihood = b_tri.Update(data)
-    print 'p(D|B_tri)', likelihood
-    print 'p(D|B_tri) / p(D|F)', likelihood / like_f
+    print('p(D|B_tri)', likelihood)
+    print('p(D|B_tri) / p(D|F)', likelihood / like_f)
 
 
 if __name__ == '__main__':

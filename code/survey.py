@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2010 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 import sys
 import gzip
@@ -73,8 +74,8 @@ class Table(object):
                 s = line[start-1:end]
                 val = cast(s)
             except ValueError:
-                #print line
-                #print field, start, end, s
+                # print(line)
+                # print(field, start, end, s)
                 val = 'NA'
             setattr(obj, field, val)
         return obj
@@ -184,11 +185,11 @@ class Pregnancies(Table):
 def main(name, data_dir='.'):
     resp = Respondents()
     resp.ReadRecords(data_dir)
-    print 'Number of respondents', len(resp.records)
+    print('Number of respondents', len(resp.records))
 
     preg = Pregnancies()
     preg.ReadRecords(data_dir)
-    print 'Number of pregnancies', len(preg.records)
+    print('Number of pregnancies', len(preg.records))
 
     
 if __name__ == '__main__':

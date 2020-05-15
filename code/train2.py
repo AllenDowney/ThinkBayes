@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 from dice import Dice
 import thinkplot
@@ -21,7 +22,7 @@ def Mean(suite):
 
 
 def MakePosterior(high, dataset):
-    hypos = xrange(1, high+1)
+    hypos = range(1, high+1)
     suite = Train(hypos)
     suite.name = str(high)
 
@@ -37,7 +38,7 @@ def main():
 
     for high in [500, 1000, 2000]:
         suite = MakePosterior(high, dataset)
-        print high, suite.Mean()
+        print(high, suite.Mean())
 
     thinkplot.Save(root='train2',
                    xlabel='Number of trains',

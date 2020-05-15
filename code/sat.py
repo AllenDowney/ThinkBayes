@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 import csv
 import math
@@ -130,10 +131,10 @@ class Exam(object):
 
         ratio = top.Prob('A') / top.Prob('B')
         
-        print 'Likelihood ratio', ratio
+        print('Likelihood ratio', ratio)
 
         posterior = ratio / (ratio + 1)
-        print 'Posterior', posterior
+        print('Posterior', posterior)
 
         if constructor is Sat2:
             ComparePosteriorPredictive(a_sat, b_sat)
@@ -341,10 +342,10 @@ def ComparePosteriorPredictive(a_sat, b_sat):
     b_like = thinkbayes.PmfProbLess(a_pred, b_pred)
     c_like = thinkbayes.PmfProbEqual(a_pred, b_pred)
 
-    print 'Posterior predictive'
-    print 'A', a_like
-    print 'B', b_like
-    print 'C', c_like
+    print('Posterior predictive')
+    print('A', a_like)
+    print('B', b_like)
+    print('C', c_like)
 
 
 def PlotPriorDist(pmf):
@@ -441,11 +442,11 @@ def ProbCorrectTable():
     difficulties = [-1.85, -0.05, 1.75]
 
     for eff in efficacies:
-        print '%0.2f & ' % eff, 
+        print('%0.2f & ' % eff, end="")
         for diff in difficulties:
             p = ProbCorrect(eff, diff)
-            print '%0.2f & ' % p, 
-        print r'\\'
+            print('%0.2f & ' % p, end="")
+        print(r'\\')
 
 
 def main(script):
