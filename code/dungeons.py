@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 import random
 
@@ -23,7 +24,7 @@ class Die(thinkbayes.Pmf):
         name: string
         """
         thinkbayes.Pmf.__init__(self, name=name)
-        for x in xrange(1, sides+1):
+        for x in range(1, sides+1):
             self.Set(x, 1)
         self.Normalize()
 

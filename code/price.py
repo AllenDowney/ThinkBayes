@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2013 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 import csv
 import numpy
@@ -33,13 +34,13 @@ def ReadData(filename='showcases.2011.csv'):
         data = t[1:]
         try:
             data = [int(x) for x in data]
-            # print heading, data[0], len(data)
+            # print(heading, data[0], len(data))
             res.append(data)
         except ValueError:
             pass
 
     fp.close()
-    return zip(*res)
+    return list(zip(*res))
     
 
 class Price(thinkbayes.Suite):
@@ -259,11 +260,11 @@ def MakePlots(player1, player2):
     cdf2 = player2.CdfDiff()
     cdf2.name = 'player 2'
 
-    print 'Player median', cdf1.Percentile(50)
-    print 'Player median', cdf2.Percentile(50)
+    print('Player median', cdf1.Percentile(50))
+    print('Player median', cdf2.Percentile(50))
 
-    print 'Player 1 overbids', player1.ProbOverbid()
-    print 'Player 2 overbids', player2.ProbOverbid()
+    print('Player 1 overbids', player1.ProbOverbid())
+    print('Player 2 overbids', player2.ProbOverbid())
 
     thinkplot.Cdfs([cdf1, cdf2])
     thinkplot.Save(root='price2',
@@ -280,8 +281,8 @@ def MakePlayers():
     cols = zip(*data)
     price1, price2, bid1, bid2, diff1, diff2 = cols
 
-    # print list(sorted(price1))
-    # print len(price1)
+    # print(list(sorted(price1)))
+    # print(len(price1))
 
     player1 = Player(price1, bid1, diff1)
     player2 = Player(price2, bid2, diff2)
@@ -301,12 +302,12 @@ def PlotExpectedGains(guess1=20000, guess2=40000):
     player1.MakeBeliefs(guess1)
     player2.MakeBeliefs(guess2)
 
-    print 'Player 1 prior mle', player1.prior.MaximumLikelihood()
-    print 'Player 2 prior mle', player2.prior.MaximumLikelihood()
-    print 'Player 1 mean', player1.posterior.Mean()
-    print 'Player 2 mean', player2.posterior.Mean()
-    print 'Player 1 mle', player1.posterior.MaximumLikelihood()
-    print 'Player 2 mle', player2.posterior.MaximumLikelihood()
+    print('Player 1 prior mle', player1.prior.MaximumLikelihood())
+    print('Player 2 prior mle', player2.prior.MaximumLikelihood())
+    print('Player 1 mean', player1.posterior.Mean())
+    print('Player 2 mean', player2.posterior.Mean())
+    print('Player 1 mle', player1.posterior.MaximumLikelihood())
+    print('Player 2 mle', player2.posterior.MaximumLikelihood())
 
     player1.PlotBeliefs('price3')
     player2.PlotBeliefs('price4')
@@ -319,11 +320,11 @@ def PlotExpectedGains(guess1=20000, guess2=40000):
 
     bids, gains = calc1.ExpectedGains()
     thinkplot.Plot(bids, gains, label='Player 1')
-    print 'Player 1 optimal bid', max(zip(gains, bids))
+    print('Player 1 optimal bid', max(zip(gains, bids)))
 
     bids, gains = calc2.ExpectedGains()
     thinkplot.Plot(bids, gains, label='Player 2')
-    print 'Player 2 optimal bid', max(zip(gains, bids))
+    print('Player 2 optimal bid', max(zip(gains, bids)))
 
     thinkplot.Save(root='price5',
                 xlabel='bid ($)',
@@ -370,13 +371,13 @@ def TestCode(calc):
     """
     # test ProbWin
     for diff in [0, 100, 1000, 10000, 20000]:
-        print diff, calc.ProbWin(diff)
+        print(diff, calc.ProbWin(diff))
     print
 
     # test Return
     price = 20000
     for bid in [17000, 18000, 19000, 19500, 19800, 20001]:
-        print bid, calc.Gain(bid, price)
+        print(bid, calc.Gain(bid, price))
     print
 
 

@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2010 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 import math
 import random
@@ -171,7 +172,7 @@ def CorrelatedGenerator(rho):
     x = random.gauss(0, 1)
     yield x
 
-    sigma = math.sqrt(1 - rho**2);    
+    sigma = math.sqrt(1 - rho**2)
     while True:
         x = random.gauss(x * rho, sigma)
         yield x

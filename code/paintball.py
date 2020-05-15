@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 import thinkbayes
 
@@ -114,8 +115,8 @@ def MakePosteriorPlot(suite):
     marginal_beta = suite.Marginal(1)
     marginal_beta.name = 'beta'
 
-    print 'alpha CI', marginal_alpha.CredibleInterval(50)
-    print 'beta CI', marginal_beta.CredibleInterval(50)
+    print('alpha CI', marginal_alpha.CredibleInterval(50))
+    print('beta CI', marginal_beta.CredibleInterval(50))
 
     thinkplot.PrePlot(num=2)
 

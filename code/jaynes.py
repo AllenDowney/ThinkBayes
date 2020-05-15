@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2013 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 import thinkbayes
 import thinkplot
@@ -168,7 +169,7 @@ def main():
         suite = Detector(r, f, step=1)
         suite.Update(k)
         thinkplot.Pmf(suite)
-        print suite.MaximumLikelihood()
+        print(suite.MaximumLikelihood())
 
     thinkplot.Save(root='jaynes1',
                    xlabel='Number of particles (n)',

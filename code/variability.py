@@ -4,11 +4,11 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 import math
 import numpy
-import cPickle
-import numpy
+import pickle
 import random
 import scipy
 
@@ -111,7 +111,7 @@ class Height(thinkbayes.Suite, thinkbayes.Joint):
 
         # compute summary stats
         median, s = MedianS(xs, num_sigmas=NUM_SIGMAS)
-        print 'median, s', median, s
+        print('median, s', median, s)
 
         self.LogUpdateSetABC(n, median, s)
 
@@ -176,7 +176,7 @@ def FindPriorRanges(xs, num_points, num_stderrs=3.0, median_flag=False):
         m = numpy.mean(xs)
         s = numpy.std(xs)
 
-    print 'classical estimators', m, s
+    print('classical estimators', m, s)
 
     # compute ranges for m and s
     stderr_m = s / math.sqrt(n)
@@ -228,7 +228,7 @@ def PlotCdfs(d, labels):
     labels: map from key to string label
     """
     thinkplot.Clf()
-    for key, xs in d.iteritems():
+    for key, xs in d.items():
         mu = thinkstats.Mean(xs)
         xs = thinkstats.Jitter(xs, 1.3)
         xs = [x-mu for x in xs]
@@ -260,9 +260,9 @@ def PlotCoefVariation(suites):
     thinkplot.PrePlot(num=2)
 
     pmfs = {}
-    for label, suite in suites.iteritems():
+    for label, suite in suites.items():
         pmf = CoefVariation(suite)
-        print 'CV posterior mean', pmf.Mean()
+        print('CV posterior mean', pmf.Mean())
         cdf = thinkbayes.MakeCdfFromPmf(pmf, label)
         thinkplot.Cdf(cdf)
     
@@ -272,16 +272,14 @@ def PlotCoefVariation(suites):
                 xlabel='Coefficient of variation',
                 ylabel='Probability')
 
-    print 'female bigger', thinkbayes.PmfProbGreater(pmfs['female'],
-                                                     pmfs['male'])
-    print 'male bigger', thinkbayes.PmfProbGreater(pmfs['male'],
-                                                   pmfs['female'])
+    print('female bigger', thinkbayes.PmfProbGreater(pmfs['female'], pmfs['male']))
+    print('male bigger', thinkbayes.PmfProbGreater(pmfs['male'], pmfs['female']))
 
 
 def PlotOutliers(samples):
     """Make CDFs showing the distribution of outliers."""
     cdfs = []
-    for label, sample in samples.iteritems():
+    for label, sample in samples.items():
         outliers = [x for x in sample if x < 150]
 
         cdf = thinkbayes.MakeCdfFromList(outliers, label)
@@ -324,7 +322,7 @@ def DumpHeights(data_dir='.', n=10000):
     [d[r.sex].append(r.htm3) for r in resp.records if r.htm3 != 'NA']
 
     fp = open('variability_data.pkl', 'wb')
-    cPickle.dump(d, fp)
+    pickle.dump(d, fp)
     fp.close()
 
 
@@ -333,8 +331,8 @@ def LoadHeights():
 
     returns: map from sex code to list of heights.
     """
-    fp = open('variability_data.pkl', 'r')
-    d = cPickle.load(fp)
+    fp = open('variability_data.pkl', 'rb')
+    d = pickle.load(fp)
     fp.close()
     return d
 
@@ -440,14 +438,14 @@ def Summarize(xs):
 
     xs: sequence of values
     """
-    # print smallest and largest
+    # print(smallest and largest)
     xs.sort()
-    print 'smallest', xs[:10]
-    print 'largest', xs[-10:]
+    print('smallest', xs[:10])
+    print('largest', xs[-10:])
 
-    # print median and interquartile range
+    # print(median and interquartile range)
     cdf = thinkbayes.MakeCdfFromList(xs)
-    print cdf.Percentile(25), cdf.Percentile(50), cdf.Percentile(75)
+    print(cdf.Percentile(25), cdf.Percentile(50), cdf.Percentile(75))
 
 
 def RunEstimate(update_func, num_points=31, median_flag=False):
@@ -463,9 +461,9 @@ def RunEstimate(update_func, num_points=31, median_flag=False):
     # PlotCdfs(d, labels)
 
     suites = {}
-    for key, xs in d.iteritems():
+    for key, xs in d.items():
         name = labels[key]
-        print name, len(xs)
+        print(name, len(xs))
         Summarize(xs)
 
         xs = thinkstats.Jitter(xs, 1.3)
@@ -474,14 +472,14 @@ def RunEstimate(update_func, num_points=31, median_flag=False):
         suite = Height(mus, sigmas, name)
         suites[name] = suite
         update_func(suite, xs)
-        print 'MLE', suite.MaximumLikelihood()
+        print('MLE', suite.MaximumLikelihood())
 
         PlotPosterior(suite)
 
         pmf_m = suite.Marginal(0)
         pmf_s = suite.Marginal(1)
-        print 'marginal mu', pmf_m.Mean(), pmf_m.Var()
-        print 'marginal sigma', pmf_s.Mean(), pmf_s.Var()
+        print('marginal mu', pmf_m.Mean(), pmf_m.Var())
+        print('marginal sigma', pmf_s.Mean(), pmf_s.Var())
 
         # PlotMarginals(suite)
 

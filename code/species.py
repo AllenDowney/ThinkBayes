@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 import matplotlib.pyplot as pyplot
 import thinkplot
@@ -46,7 +47,7 @@ class Locker(object):
 
     def Keys(self):
         """Returns an iterator of keys."""
-        return self.shelf.iterkeys()
+        return self.shelf.keys()
 
     def Read(self):
         """Returns the contents of the shelf as a map."""
@@ -107,7 +108,7 @@ class Subject(object):
             p = (1-q) ** k
             return p
 
-        print self.code, clean_param
+        print(self.code, clean_param)
 
         counts = self.GetCounts()
         r = 1.0 * sum(counts)
@@ -145,7 +146,7 @@ class Subject(object):
     def PrintCounts(self):
         """Prints the counts and species names."""
         for count, name in reversed(self.species):
-            print count, name
+            print(count, name)
 
     def GetSpecies(self, index):
         """Gets the count and name of the indicated species.
@@ -191,7 +192,7 @@ class Subject(object):
         self.suite.Update(counts)
         #end = time.time()
 
-        #print 'Processing time' end-start
+        #print('Processing time' end-start)
 
     def MakePrediction(self, num_sims=100):
         """Make predictions for the given subject.
@@ -243,7 +244,7 @@ class Subject(object):
     def PlotDistN(self):
         """Plots distribution of n."""
         pmf = self.suite.DistN()
-        print '90% CI for N:', pmf.CredibleInterval(90)
+        print('90% CI for N:', pmf.CredibleInterval(90))
         pmf.name = self.code
 
         thinkplot.Clf()
@@ -290,8 +291,8 @@ class Subject(object):
         count, _ = self.GetSpecies(index)
         mix.name = '%d (%d)' % (rank, count)
 
-        print '90%% CI for prevalence of species %d:' % rank, 
-        print mix.CredibleInterval(90)
+        print('90%% CI for prevalence of species %d:' % rank, end="")
+        print(mix.CredibleInterval(90))
 
         if cdf_flag:
             cdf = mix.MakeCdf()
@@ -307,8 +308,8 @@ class Subject(object):
         # convert rank to index
         index = self.GetM() - rank
 
-        print self.GetSpecies(index)
-        print self.GetCounts()[index]
+        print(self.GetSpecies(index))
+        print(self.GetCounts()[index])
 
         metapmf, mix = self.suite.DistOfPrevalence(index)
 
@@ -354,7 +355,7 @@ class Subject(object):
         observations = cdf.Sample(num_reads)
 
         #for ob in observations:
-        #    print ob
+        #    print(ob)
 
         return n, observations
 
@@ -478,8 +479,8 @@ def MakeConditionals(curves, ks):
         pmf.name = 'k=%d' % k
         cdf = pmf.MakeCdf()
         cdfs.append(cdf)
-        print '90%% credible interval for %d' % k,
-        print cdf.CredibleInterval(90)
+        print('90%% credible interval for %d' % k, end="")
+        print(cdf.CredibleInterval(90))
     return cdfs
 
 
@@ -512,7 +513,7 @@ def MakeFracCdfs(curves, ks):
                 d.setdefault(k, []).append(frac)
 
     cdfs = {}
-    for k, fracs in d.iteritems():
+    for k, fracs in d.items():
         cdf = thinkbayes.MakeCdfFromList(fracs)
         cdfs[k] = cdf
 
@@ -552,8 +553,7 @@ def ReadRarefactedData(filename='journal.pone.0047712.s001.csv',
     """
     fp = open(filename)
     reader = csv.reader(fp)
-    _ = reader.next()
-    
+    _ = next(reader)
     subject = Subject('')
     subject_map = {}
 
@@ -573,7 +573,7 @@ def ReadRarefactedData(filename='journal.pone.0047712.s001.csv',
         count = int(t[2])
         subject.Add(species, count)
 
-    for code, subject in subject_map.iteritems():
+    for code, subject in subject_map.items():
         subject.Done(clean_param=clean_param)
 
     return subject_map
@@ -592,8 +592,9 @@ def ReadCompleteDataset(filename='BBB_data_from_Rob.csv', clean_param=0):
     """
     fp = open(filename)
     reader = csv.reader(fp)
-    header = reader.next()
-    header = reader.next()
+
+    header = next(reader)
+    header = next(reader)
 
     subject_codes = header[1:-1]
     subject_codes = ['B'+code for code in subject_codes]
@@ -620,7 +621,7 @@ def ReadCompleteDataset(filename='BBB_data_from_Rob.csv', clean_param=0):
 
         counts = [int(x) for x in t[1:-1]]
 
-        # print otu_code, species
+        # print(otu_code, species)
 
         for code, count in zip(subject_codes, counts):
             if count > 0:
@@ -628,7 +629,7 @@ def ReadCompleteDataset(filename='BBB_data_from_Rob.csv', clean_param=0):
                 uber_subject.Add(species, count)
 
     uber_subject.Done(clean_param=clean_param)
-    for code, subject in subject_map.iteritems():
+    for code, subject in subject_map.items():
         subject.Done(clean_param=clean_param)
 
     return subject_map, uber_subject
@@ -652,7 +653,7 @@ def JoinSubjects():
     # read the complete dataset
     all_subjects, _ = ReadCompleteDataset()
 
-    for code, subject in sampled_subjects.iteritems():
+    for code, subject in sampled_subjects.items():
         if code in all_subjects:
             match = all_subjects[code]
             subject.Match(match)
@@ -730,7 +731,7 @@ def PlotFracCdfs(cdfs, root='species-frac'):
     thinkplot.Clf()
     color = '#225EA8'
 
-    for k, cdf in cdfs.iteritems():
+    for k, cdf in cdfs.items():
         xs, ys = cdf.Render()
         ys = [1-y for y in ys]
         thinkplot.Plot(xs, ys, color=color, linewidth=1)
@@ -825,12 +826,12 @@ class Species2(object):
         m = len(data)
         singletons = data.count(1)
         num = m - singletons
-        print m, singletons, num
+        print(m, singletons, num)
         addend = numpy.ones(num, dtype=numpy.float) * 1
-        print len(addend)
-        print len(self.params[singletons:m])
+        print(len(addend))
+        print(len(self.params[singletons:m]))
         self.params[singletons:m] += addend
-        print 'Preload', num
+        print('Preload', num)
 
     def Update(self, data):
         """Updates the distribution based on data.
@@ -972,7 +973,7 @@ class Species2(object):
         n = self.RandomN()
         prevalences = self.SamplePrevalences(n)
 
-        #print 'Peeking at n_cheat'
+        #print('Peeking at n_cheat')
         #n = n_cheat
 
         return n, prevalences
@@ -1011,7 +1012,7 @@ class Species2(object):
         x = sum(params[:m])
         y = sum(params[m:])
         a = x + y
-        #print x, y, a, x/a, y/a
+        #print(x, y, a, x/a, y/a)
 
         g = q_desired * a / y
         f = (a - g * y) / x
@@ -1207,11 +1208,11 @@ def MakePosterior(constructor, data, ns, conc=1, iters=1000):
     """
     suite = constructor(ns, conc=conc, iters=iters)
 
-    # print constructor.__name__
+    # print(constructor.__name__)
     start = time.time()
     suite.Update(data)
     end = time.time()
-    print 'Processing time', end-start
+    print('Processing time', end-start)
 
     return suite
 
@@ -1264,12 +1265,12 @@ def SimpleDirichletExample():
     dirichlet = thinkbayes.Dirichlet(3)
     for i in range(3):
         beta = dirichlet.MarginalBeta(i)
-        print 'mean', names[i], beta.Mean()
+        print('mean', names[i], beta.Mean())
 
     dirichlet.Update(data)
     for i in range(3):
         beta = dirichlet.MarginalBeta(i)
-        print 'mean', names[i], beta.Mean()
+        print('mean', names[i], beta.Mean())
 
         pmf = beta.MakePmf(name=names[i])
         thinkplot.Pmf(pmf)
@@ -1341,8 +1342,8 @@ def ProcessSubjects(codes):
 
         pmfs.append(pmf)
 
-    print 'ProbGreater', thinkbayes.PmfProbGreater(pmfs[0], pmfs[1])
-    print 'ProbLess', thinkbayes.PmfProbLess(pmfs[0], pmfs[1])
+    print('ProbGreater', thinkbayes.PmfProbGreater(pmfs[0], pmfs[1]))
+    print('ProbLess', thinkbayes.PmfProbLess(pmfs[0], pmfs[1]))
 
     thinkplot.Save(root='species4',
                 xlabel='Number of species',
@@ -1394,15 +1395,13 @@ def PrintSummary(subject):
 
     subject: Subject
     """
-    print subject.code
-    print 'found %d species in %d reads' % (subject.num_species,
-                                            subject.num_reads)
+    print(subject.code)
+    print('found %d species in %d reads' % (subject.num_species, subject.num_reads))
 
-    print 'total %d species in %d reads' % (subject.total_species,
-                                            subject.total_reads)
+    print('total %d species in %d reads' % (subject.total_species, subject.total_reads))
 
     cdf = subject.suite.DistN().MakeCdf()
-    print 'n'
+    print('n')
     PrintPrediction(cdf, 'unknown')
     
 
@@ -1415,8 +1414,8 @@ def PrintPrediction(cdf, actual):
     median = cdf.Percentile(50)
     low, high = cdf.CredibleInterval(75)
     
-    print 'predicted %0.2f (%0.2f %0.2f)' % (median, low, high)
-    print 'actual', actual
+    print('predicted %0.2f (%0.2f %0.2f)' % (median, low, high))
+    print('actual', actual)
 
 
 def RandomSeed(x):
@@ -1483,14 +1482,14 @@ def PlotActualPrevalences():
     # concentration parameter used in the simulation
     conc = 0.06
 
-    for code, subject in subject_map.iteritems():
+    for code, subject in subject_map.items():
         prevalences = subject.GetPrevalences()
         m = len(prevalences)
         if m < 2:
             continue
 
         actual_max = max(prevalences)
-        print code, m, actual_max
+        print(code, m, actual_max)
 
         # incr the PMFs
         if m > 50:
@@ -1588,12 +1587,12 @@ class Calibrator(object):
         subject_map, _ = ReadCompleteDataset(clean_param=clean_param)
 
         i = 0
-        for match in subject_map.itervalues():
+        for match in subject_map.values():
             if match.num_reads < 400:
                 continue
             num_reads = 100
 
-            print 'Validate', match.code
+            print('Validate', match.code)
             subject = match.Resample(num_reads)
             subject.Match(match)
 
@@ -1647,9 +1646,9 @@ class Calibrator(object):
 
     def PlotCalibrationCurves(self, root='species5'):
         """Plots calibration curves"""
-        print self.total_n
-        print self.total_q
-        print self.total_l
+        print(self.total_n)
+        print(self.total_q)
+        print(self.total_l)
 
         thinkplot.Plot([0, 100], [0, 100], color='gray', alpha=0.2)
 
@@ -1689,14 +1688,14 @@ class Calibrator(object):
             self.conc)
 
         l_actual = len(hist) - len(subhist)
-        print 'Run low, high, conc', n_low, n_high, self.conc
-        print 'Run r, tr', r, tr
-        print 'Run n, q, l', n_actual, q_actual, l_actual
+        print('Run low, high, conc', n_low, n_high, self.conc)
+        print('Run r, tr', r, tr)
+        print('Run n, q, l', n_actual, q_actual, l_actual)
 
         # extract the data
         data = [count for species, count in subhist.Items()]
         data.sort()
-        print 'data', data
+        print('data', data)
 
         # make a Subject and process
         subject = Subject('simulated')
@@ -1726,17 +1725,17 @@ class Calibrator(object):
 
         # check the distribution of n
         pmf_n = suite.DistN() 
-        print 'n'
+        print('n')
         self.total_n += self.CheckDistribution(pmf_n, n_actual, self.n_seq)
 
         # check the distribution of q
         pmf_q = suite.DistQ()
-        print 'q'
+        print('q')
         self.total_q += self.CheckDistribution(pmf_q, q_actual, self.q_seq)
 
         # check the distribution of additional species
         pmf_l = subject.DistL()
-        print 'l'
+        print('l')
         self.total_l += self.CheckDistribution(pmf_l, l_actual, self.l_seq)
 
     def CheckDistribution(self, pmf, actual, seq):
@@ -1847,12 +1846,12 @@ def PlotSubjectCdf(code=None, clean_param=0):
     else:
         subject = subject_map[code]
 
-    print subject.code
+    print(subject.code)
 
     m = subject.GetM()
 
     subject.Process(high=m, conc=0.1, iters=0)
-    print subject.suite.params[:m]
+    print(subject.suite.params[:m])
 
     # plot the cdf
     options = dict(linewidth=3, color='blue', alpha=0.5)

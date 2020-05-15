@@ -4,6 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from __future__ import print_function
 
 import thinkbayes
 import thinkplot
@@ -40,7 +41,7 @@ def MakePosterior(high, dataset, constructor):
 
     Returns: posterior Suite
     """
-    hypos = xrange(1, high+1)
+    hypos = range(1, high+1)
     suite = constructor(hypos)
     suite.name = str(high)
 
@@ -80,18 +81,18 @@ def main():
 
     for high in [500, 1000, 2000]:
         suite = MakePosterior(high, dataset, Train2)
-        print high, suite.Mean()
+        print(high, suite.Mean())
 
     thinkplot.Save(root='train3',
                    xlabel='Number of trains',
                    ylabel='Probability')
 
     interval = Percentile(suite, 5), Percentile(suite, 95)
-    print interval
+    print(interval)
 
     cdf = thinkbayes.MakeCdfFromPmf(suite)
     interval = cdf.Percentile(5), cdf.Percentile(95)
-    print interval
+    print(interval)
 
 
 if __name__ == '__main__':
