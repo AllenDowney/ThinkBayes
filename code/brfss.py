@@ -29,7 +29,7 @@ class Respondents(survey.Table):
 
         This function can be overridden by child classes.
 
-        The BRFSS data is available from thinkstats.com/CDBRFS08.ASC.gz
+        The BRFSS data is available from https://greenteapress.com/thinkstats/CDBRFS08.ASC.gz
 
         """
         return 'CDBRFS08.ASC.gz'
